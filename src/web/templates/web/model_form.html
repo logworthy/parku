@@ -1,0 +1,298 @@
+{% extends "web/base.html" %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/static/web/create.css" />
+{% endblock %}
+
+{%block content %}
+    <div class="row">
+        <div class="col-md-4">
+            <h3>How to design a model</h3>
+            <p>
+                You may want to create a new business or community service in order to serve your community. The "herri" model builder allows you to arrange separate populations measured by the census into a model and give them your desired weighting out of 10. This allows you to see where your community is.
+            </p>
+            <p>
+                You should be aware of the <a href="https://en.wikipedia.org/wiki/Ecological_fallacy">ecological fallacy</a> and the <a href="https://en.wikipedia.org/wiki/Modifiable_Areal_Unit_Problem">modifiable areal unit problem</a>.
+            </p>
+	    <iframe src="//player.vimeo.com/video/100619754" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+	    <iframe src="//player.vimeo.com/video/100619753" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <h3>Describe your model</h3>
+
+                <div class="input-group-lg">
+                    <input id="inputModelName" type="text" class="form-control" placeholder="Name your model" />
+                </div>
+
+                <textarea id="inputModelDescription" class="form-control" placeholder="What is the model about?"></textarea>
+
+                <!--<div class="btn-group">
+                    <button class="btn btn-default btn-lg dropdown-toggle" type="button" data-toggle="dropdown">
+                        Services <span class="caret"></span>
+                    </button>
+                    <ul class="services dropdown-menu" role="menu">
+                        <li><a href="#" class=""></a></li>
+                        <li><a href="#" class="church">Church</a></li>
+                        <li><a href="#" class="school ">School </a></li>
+                        <li><a href="#" class="skyscraper">Skyscraper</a></li>
+                        <li><a href="#" class="hospital ">Hospital </a></li>
+                        <li><a href="#" class="cafe">Cafe</a></li>
+                        <li><a href="#" class="pool">Pool</a></li>
+                        <li><a href="#" class="police">Police</a></li>
+                        <li><a href="#" class="taxi">Taxi</a></li>
+                        <li><a href="#" class="fire">Fire</a></li>
+                        <li><a href="#" class="post-office">Post office</a></li>
+                        <li><a href="#" class="parks">Parks</a></li>
+                        <li><a href="#" class="house">House</a></li>
+                    </ul>
+                </div>-->
+            </div>
+        </div>
+        <div class="col-md-4">
+
+            <h3>Choose what to include</h3>
+
+            <div id="cards" class="panel-group"></div>
+
+            <button id="btnAdd" class="btn btn-default">Add another</button>
+            <button id="btnFinished" class="btn btn-primary">Save and view</button>
+
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascript %}
+
+
+    <script type="text/javascript" src="/static/web/bootstrap/js/bootstrap.js"></script>
+    <script type="text/javascript">
+
+        var attributes = {{ attributes_json|safe }}
+
+        var getWeights = function() {
+
+            var data = {
+                name        : $('#inputModelName').val(),
+                description : $('#inputModelDescription').val(),
+                weightings  : []
+            };
+
+            $( '#cards' ).find( '.card' ).each( function( i, item ) {
+                var attribute = $( item ).find( 'select[name=attribute]' ).val();
+                if ( attribute != "" ) {
+                    data.weightings.push({
+                        attribute: $(item).find('select[name=attribute]').val(),
+                        weight: $(item).find('select[name=weight]').val()
+                    });
+                }
+            });
+
+            return data;
+
+        };
+
+        var isAlreadyIncluded = function( attributeName ) {
+
+            var data = getWeights();
+            var count = 0;
+            for ( var i = 0; i < data.weightings.length; i ++ ) {
+                if ( data.weightings[ i ].attribute == attributeName ) {
+                    count ++;
+                    if ( count > 1 ) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+
+        };
+
+        var showAlreadyUsedWarning = function( card ) {
+            var message = "This attribute is already being used. Please chose another.";
+            $( card ).find( '.alert' ).html( message ).show( 'fast');
+            $( card ).addClass( 'panel-danger' );
+        };
+
+        var hideWarning = function( card ) {
+            $( card ).find( '.alert' ).html( "" ).hide();
+            $( card ).removeClass( 'panel-danger' );
+        };
+
+        var changePanelTitle = function( panel, title ) {
+            $( panel ).find( '.panel-heading a' ).html( title );
+        };
+
+        var collapseAllCards = function() {
+            var cards = $( '#cards' ).find( '.card' );
+            cards.find( '.panel-heading' ).show( 'fast' );
+            cards.find( '.panel-body' ).hide( 'fast' );
+        };
+
+        var showCard = function( card ) {
+            $( card ).find( '.panel-heading').hide( 'fast' );
+            $( card ).find( '.panel-body').show( 'fast' );
+        };
+
+        var removeCard = function( card ) {
+            $( card ).remove();
+            if ( $( '#cards' ).find( '.card' ).length == 0 ) {
+                addNewCard();
+            }
+        };
+
+        // All cards are created hidden, you will need to show them
+        // after adding them to the dom.
+        var createCard = function() {
+
+            var createDropdown = function() {
+
+                var select       = document.createElement( "select" );
+                select.className = "attribute";
+                select.name      = "attribute";
+
+                var option        = document.createElement( "option" );
+                option.value     = "";
+                option.innerHTML = "Choose an attribute";
+                select.appendChild( option );
+
+                for ( var i = 0; i < attributes.length; i ++ ) {
+                    var value = attributes[ i ].pk;
+                    var name  = attributes[ i ].fields.name;
+                    option           = document.createElement( "option" );
+                    option.value     = value;
+                    option.innerHTML = name;
+                    select.appendChild( option );
+                }
+
+                $( select ).change( function() {
+                    var card = $( this ).closest( '.panel' );
+                    var value = "Choose an interesting attribute";
+                    for ( var i = 0; i < attributes.length; i ++ ) {
+                        if ( attributes[ i ].pk == $( this).val() ) {
+                            value = attributes[ i ].fields.name;
+                        }
+                    }
+                    changePanelTitle( card, value );
+                    if ( isAlreadyIncluded( value ) ) {
+                        showAlreadyUsedWarning( card );
+                    } else {
+                        hideWarning( card );
+                        $('#btnAdd').prop('disabled', false);
+                    }
+                });
+
+                return select;
+            };
+
+            var createTitle = function() {
+
+                var cardTitle = document.createElement( "div" );
+                cardTitle.className = "panel-heading";
+
+                var closeIcon       = document.createElement( "button" );
+                closeIcon.type      = "button";
+                closeIcon.className = "close";
+                closeIcon.innerHTML = "<span aria-hidden='true'>&times;</span><span class='sr-only'>Close</span>";
+                closeIcon.onclick   = function() {
+                    removeCard( $( this ).closest( '.panel' ) );
+                };
+                cardTitle.appendChild( closeIcon );
+
+                var titleLink       = document.createElement( "a" );
+                titleLink.innerHTML = "Choose an interesting attribute";
+                titleLink.style     = "display: block";
+                cardTitle.appendChild( titleLink );
+
+                cardTitle.onclick = function() {
+                    collapseAllCards();
+                    showCard( $( this ).closest( '.panel' ) );
+                };
+
+                return cardTitle;
+            };
+
+            var createSlider = function() {
+
+                var slider       = document.createElement( "select" );
+                slider.className = "weight";
+                slider.name      = "weight";
+
+                for ( var i = 1; i <= 10; i ++ ) {
+                    var option       = document.createElement( "option" );
+                    option.value     = i;
+                    option.innerHTML = i + " / 10";
+                    slider.appendChild( option );
+                }
+
+                return slider;
+
+            };
+
+            var createWarning = function() {
+                var warning       = document.createElement( "div" );
+                warning.className = "alert alert-danger";
+                warning.role      = "alert";
+                warning.style     = "display: none;";
+                return warning;
+            };
+
+            var createBody = function() {
+
+                var cardInner       = document.createElement( "div" );
+                cardInner.className = "panel-body";
+                cardInner.appendChild( createDropdown() );
+                cardInner.appendChild( createSlider() );
+                cardInner.appendChild( createWarning() );
+                return cardInner;
+
+            };
+
+            var card       = document.createElement( "div" );
+            card.className = "card panel panel-default";
+            card.style     = "display: none";
+            card.appendChild( createTitle() );
+            card.appendChild( createBody() );
+
+            return card;
+        };
+
+        var getCurrentCard = function() {
+            return $( '#cards' ).find( '.card:not( .collapsed )' );
+        };
+
+        var addNewCard = function() {
+            collapseAllCards();
+            var card = createCard();
+            $( '#cards' ).append( card ).show( 'slideDown' );
+            hideWarning( card );
+            $( '#btnAdd' ).prop( 'disabled', true );
+        };
+
+        var finish = function() {
+            // TODO: Actually validate the data properly...
+            $.post(
+                "/api/attribute_models/new/",
+                { model : JSON.stringify( getWeights() ) },
+                function( data ) {
+                    console.log( data );
+                    if ( data.hasOwnProperty( 'error' ) ) {
+                        alert( "Awww, an error occured while saving your model... :(" );
+                    } else {
+                        var id = data.pop().pk;
+                        document.location = "/model/" + id;
+                    }
+                }
+            );
+
+        };
+
+        addNewCard();
+
+        $( '#btnAdd'      ).click( function() { addNewCard(); } );
+        $( '#btnFinished' ).click( function() { finish(); } );
+
+    </script>
+
+{% endblock %}

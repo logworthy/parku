@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>parku</title>
+    <link rel="stylesheet" href="/static/web/leaflet.css" />
+    <link rel="stylesheet" href="/static/web/bootstrap/css/bootstrap.css" />
+	<link rel="stylesheet" href="/static/web/stylesheet.css" />
+	<link rel="stylesheet" href="/static/web/normalize.css" />
+
+    {% block stylesheets %}{% endblock %}
+    {% block head %}{% endblock %}
+
+</head>
+<body>
+
+    {% block content %}{% endblock %}
+
+    <script type="text/javascript" src="/static/web/leaflet-src.js"></script>
+    <script type="text/javascript" src="/static/web/jquery-2.1.1.js"></script>
+
+    {% block javascript %}{% endblock %}
+
+</body>
+</html>

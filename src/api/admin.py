@@ -1,3 +1,5 @@
 from django.contrib import admin
+from api.models import ParkingBay, ParkingEvent
 
-# Register your models here.
+admin.site.register(ParkingBay)
+admin.site.register(ParkingEvent)

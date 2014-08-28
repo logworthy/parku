@@ -1,48 +1,17 @@
-#map{
-	height: 500px;
-	width: 100%;
-}
-
-.panel.text p {
-    text-align: left;
-    padding: 1em;
-}
-	
-.legendText {
-	display: inline;
-}
-
-.legendBox {
-    width: 18px;
-    height: 18px;
-    margin-right: 8px;
-    opacity: 0.7;
-	display: inline-block;
-}
-
-.poi-info .name {
-    font-size: 1.3em;
-}
-
-.leaflet-control-layers-overlays label {
-    font-weight: normal;
-    margin: 0;
-}
-
-.info, .leaflet-control-layers {
-    padding: 0.5em 0.6em;
-    font: 1.1em Arial, Helvetica, sans-serif;
-    font-weight: normal;
+#header {
     background: white;
-    background: rgba(255,255,255,0.8);
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-    border-radius: 5px;
+    border-bottom: solid 4px #4593d9;
 }
 
-li {
-	list-style-type:none;
+#expando {
+    display: none;
 }
 
-.panel h2 {
-	text-align: center;
+#hamburger {
+    float: right;
+    margin: 1em;
+}
+
+#hamburger img {
+    height: 32px;
 }

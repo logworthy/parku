@@ -1,12 +1,53 @@
 {% extends "web/base.html" %}
 
+{% block stylesheets %}
+    <link href="/static/web/map.css" rel="stylesheet" />
+{% endblock %}
+
 {% block head %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 {% endblock %}
 
-{% block content %}
-    <div id="map">
+{% block expando %}
+
+    <div id="filters">
+
+        <ul id="toggles" class="filter">
+            <li>
+                <input id="toggle-money" type="checkbox" class="icon money" />
+                <label for="toggle-money">$</label>
+            </li>
+            <li>
+                <input id="toggle-mins-15" type="checkbox" class="icon mins-15" />
+                <label for="toggle-mins-15">15m</label>
+            </li>
+            <li>
+                <input id="toggle-mins-60" type="checkbox" class="icon mins-60" />
+                <label for="toggle-mins-60">1h</label>
+            </li>
+            <li>
+                <input id="toggle-mins-120" type="checkbox" class="icon mins-120" />
+                <label for="toggle-mins-120">2h</label>
+            </li>
+        </ul>
+
+        <div id="time" class="filter">
+            <div id="time-of-day-slider"></div>
+            <div id="time-of-day"></div>
+        </div>
+
     </div>
+
+{% endblock %}
+
+{% block content %}
+
+    <div id="map">
+        <div id="search">
+            <input id="search-input" type="text" name="search" placeholder="Search Melbourne" />
+        </div>
+    </div>
+
 {% endblock %}
 
 {% block javascript %}
@@ -15,15 +56,105 @@
 
         (function() {
 
-            var map = L.map( 'map' ).setView( [ -37.808970221752396, 144.9597930908203 ], 10 );
+            var setupFilters = function() {
 
-            L.tileLayer.wms("http://api.maps.vic.gov.au/geowebcacheWM/service/wms?SERVICE=WMS&TILED=true", {
-                layers: 'WEB_MERCATOR',
-                format: 'image/png',
-                attribution: 'Map data &copy; <a href="http://api.maps.vic.gov.au">Vic Map</a>',
-                maxZoom: 18,
-                srs: 'EPSG:3857'
-            }).addTo( map );
+                var setup_THE_AMAZING_SLIDER = function() {
+
+                    var showTimeOfDay = function(time) {
+
+                        var value = "";
+                        if ( time == 24 ) {
+                            value = "Midnight";
+                        } else if ( time == 12 ) {
+                            value = "Noon";
+                        } else {
+                            var suffix = "";
+                            if ( time > 12 ) {
+                                time -= 12;
+                                suffix = "pm"
+                            } else {
+                                suffix = "am"
+                            }
+                            value = time + ":00" + suffix;
+                        }
+
+                        $( '#time-of-day').html( value );
+                    };
+
+                    $( "#time-of-day-slider" ).slider({
+                        value: 12,
+                        min: 1,
+                        max: 24,
+                        step: 1,
+                        slide: function( event, ui ) {
+                            showTimeOfDay( ui.value );
+                        }
+                    });
+
+                    showTimeOfDay( 14 );
+
+                };
+
+                var setupToggles = function() {
+                    $( '#toggles' ).find( 'input:checkbox' ).button();
+                };
+
+                setup_THE_AMAZING_SLIDER();
+                setupToggles();
+
+            };
+
+            var setupSearch = function() {
+
+
+
+                $( '#search-input' ).change( function() {
+
+                    var query = this.value;
+
+                    var fetchLocations = function( query, callback ) {
+
+                        var apiAddress = "http://...";
+
+                        $.get(
+                            apiAddress,
+                            { query : query },
+                            function( data ) {
+
+                                var locations = [];
+                                for ( var i = 0; i < data.length; i ++ ) {
+
+                                }
+
+                            }
+                        );
+
+                    }
+
+                });
+
+            };
+
+            var initMap = function() {
+
+                var map = L.map( 'map' ).setView( [ -37.808970221752396, 144.9597930908203 ], 8 );
+
+                L.tileLayer.wms("http://api.maps.vic.gov.au/geowebcacheWM/service/wms?SERVICE=WMS&TILED=true", {
+                    layers: 'WEB_MERCATOR',
+                    format: 'image/png',
+                    attribution: 'Map data &copy; <a href="http://api.maps.vic.gov.au">Vic Map</a>',
+                    maxZoom: 14,
+                    srs: 'EPSG:3857'
+                }).addTo( map );
+
+                return map;
+
+            };
+
+            var map = initMap();
+            setupFilters();
+            setupSearch();
+
 
         })();
     </script>

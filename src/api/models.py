@@ -1,6 +1,12 @@
 from django.contrib.gis.db import models
 
 
+class DayOfWeek(models.Model):
+    day_number = models.IntegerField()
+    short_name = models.CharField(max_length=3)
+    name = models.CharField(max_length=9)
+
+
 class SignType(models.Model):
     code = models.CharField(max_length=2)
     label = models.CharField(max_length=20)
@@ -13,7 +19,9 @@ class SignArchetype(models.Model):
     start_day = models.IntegerField()
     end_day = models.IntegerField()
 
-    permit = models.BooleanField()
+    # AKA "God Mode"
+    allow_permit_override = models.BooleanField()
+
     requires_pay_ticket = models.BooleanField()
     requires_pay_meter = models.BooleanField()
     requires_disability_permit = models.BooleanField()

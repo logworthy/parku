@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="/static/web/leaflet.css" />
     <link rel="stylesheet" href="/static/web/bootstrap/css/bootstrap.css" />
 	<link rel="stylesheet" href="/static/web/stylesheet.css" />
+	<link rel="stylesheet" href="/static/web/jquery-ui-1.11.1.custom/jquery-ui.min.css" />
 	<link rel="stylesheet" href="/static/web/normalize.css" />
 
     {% block stylesheets %}{% endblock %}
@@ -14,10 +15,38 @@
 </head>
 <body>
 
+    <div id="header">
+        <img src="/static/web/images/logo-white.64px.png" />
+        <a href="#" id="hamburger">
+            <img src="/static/web/images/icons/hamburger.png" />
+        </a>
+        <div id="expando">
+            {% block expando %}{% endblock %}
+        </div>
+    </div>
+
     {% block content %}{% endblock %}
 
     <script type="text/javascript" src="/static/web/leaflet-src.js"></script>
     <script type="text/javascript" src="/static/web/jquery-2.1.1.js"></script>
+    <script type="text/javascript" src="/static/web/jquery-ui-1.11.1.custom/jquery-ui.js"></script>
+
+    <script>
+        (function() {
+
+            var expando = $( '#expando' );
+            $( '#hamburger' ).click(function () {
+
+                if ( expando.is( ':visible' ) ) {
+                    expando.hide( 'up' );
+                } else {
+                    expando.show( 'down' );
+                }
+
+            });
+
+        })();
+    </script>
 
     {% block javascript %}{% endblock %}
 

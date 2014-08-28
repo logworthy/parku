@@ -12,6 +12,11 @@ We have also developed a simple map which shows how the API works and provides a
 
 * This is an area for improvement for the city of melbourne 
 
+Ubuntu dependencies
+-------------------
+
+apt-get install apache2 postgresql-client-9.3 postgresql-9.3-postgis-2.1 
+
 Python dependencies
 -------------------
 

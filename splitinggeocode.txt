@@ -1,0 +1,10 @@
+(street) between (street) and (street)
+Intersection of (street) and street)
+(sttreet) from *street)
+(number) (alpha) (street)
+(street)
+PL(numbers)
+Pl(numbers)
+Cl(numbers)
+CL(numbers)
+[Null]

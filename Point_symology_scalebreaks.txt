@@ -1,0 +1,4 @@
+1:50k City
+1:25k Suburb
+1:10k Neigbbourhood
+1:800 Street

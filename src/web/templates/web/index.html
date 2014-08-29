@@ -57,6 +57,8 @@
 {% block javascript %}
 
     <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-heat/v0.1.0/leaflet-heat.js'></script>
+    <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-heat/v0.1.0/leaflet-heat.js'></script>
+    <script src='/static/web/leaflet.label.js'></script>
     <script type="text/javascript">
 
         var map = null;
@@ -112,8 +114,6 @@
             };
 
             var setupSearch = function() {
-
-
 
                 $( '#search-input' ).change( function() {
 
@@ -173,7 +173,21 @@
                             map.removeLayer( points );
                         }
 
-                        points = L.geoJson( response ).addTo( map );
+
+                        points = L.geoJson( response,
+                            {
+                                style: function ( feature ) {
+                                    return { color: '#03f' };
+                                },
+                                onEachFeature: function (feature, layer) {
+                                    var myLayer = layer;
+                                    myLayer.bindPopup('<b>' + feature.properties.bay_count + ' parks</b>');
+                                    return myLayer;
+                                }
+
+                        }).addTo( map );
+
+                        // points = L.geoJson( response ).addTo( map );
                     }
                 )
 

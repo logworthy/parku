@@ -13,11 +13,13 @@ class SignType(models.Model):
 
 
 class SignArchetype(models.Model):
-    start_time = models.TimeField()
-    end_time = models.TimeField()
+    start_time = models.TimeField(null=True)
+    end_time = models.TimeField(null=True)
 
-    start_day = models.IntegerField()
-    end_day = models.IntegerField()
+    start_day = models.ForeignKey(DayOfWeek, null=True, related_name='archetype_start')
+    end_day = models.ForeignKey(DayOfWeek, null=True, related_name='archetype_end')
+
+    any_other_time = models.BooleanField()
 
     # AKA "God Mode"
     allow_permit_override = models.BooleanField()
@@ -29,6 +31,8 @@ class SignArchetype(models.Model):
     duration_mins = models.IntegerField()
 
     type = models.ForeignKey(SignType)
+
+    raw_sign_text = models.CharField(max_length=50)
 
     def requires_pay(self):
         return self.requires_pay_meter or self.requires_pay_ticket

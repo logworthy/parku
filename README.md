@@ -1,8 +1,7 @@
 parku
 =====
 
-
- City of Melbourne Parking Spaces Project for infraHack 2014
+City of Melbourne Parking Spaces Project for infraHack 2014
 
 How do the objects that you buy get into the city?
 Buisnesses use logistics applications to optimise the last mile frieght.

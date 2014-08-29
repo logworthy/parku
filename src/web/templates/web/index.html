@@ -43,7 +43,7 @@
 {% block content %}
 
     <div id="map">
-        <div id="search">
+        <div id="search" style="display: none">
             <input id="search-input" type="text" name="search" placeholder="Search Melbourne" />
         </div>
     </div>
@@ -53,6 +53,8 @@
 {% block javascript %}
 
     <script type="text/javascript">
+
+        var map = null;
 
         (function() {
 
@@ -151,22 +153,33 @@
 
             };
 
-            var initPoints = function( map ) {
+            var points = null;
+
+            var loadPoints = function() {
+
+                var zoom = map.getZoom();
 
                 $.getJSON(
-                    '/api/bays',
+                    '/api/bays/aggregate/' + zoom + '?format=json',
                     {},
                     function( response ) {
-                        L.geoJson( response ).addTo( map );
+
+                        if ( points != null ) {
+                            map.removeLayer( points );
+                        }
+
+                        points = L.geoJson( response ).addTo( map );
                     }
                 )
 
             };
 
-            var map = initMap();
-            initPoints( map );
+            map = initMap();
+            loadPoints();
             setupFilters();
             setupSearch();
+
+            map.on( 'zoomend', function() { loadPoints(); } );
 
 
         })();

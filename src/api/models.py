@@ -63,3 +63,26 @@ class ParkingEvent(models.Model):
 
     def __str__(self):
         return "Parking event: %s (from %s to %s)" % (self.parking_bay, self.arrival_time, self.departure_time)
+
+
+class AggregateGridCell(models.Model):
+    zoom_level = models.IntegerField()
+    geom = models.PolygonField()
+
+    #13 - 30"
+    #14 - 15"
+    #15 -  8"
+    #16 -  4"
+    #17 -  2"
+
+    # bounds x [ 144 56' -> 144 60' ]
+    # bounds y [ 37   5' -> 37  48' ]
+
+    # ( 37.083333, 144.933333 )
+    # ( 37.8, 144.999722 )
+
+
+class AggregateParkingBays(models.Model):
+    center = models.PointField()
+    bay_count = models.IntegerField()
+    zoom_level = models.IntegerField()

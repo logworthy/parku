@@ -7,3 +7,5 @@ class ParkingBaySerializer(GeoFeatureModelSerializer):
         model = ParkingBay
         geo_field = 'geom'
         fields = ('street_marker',)
+
+#class SignArchetypeSerializer():

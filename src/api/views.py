@@ -22,3 +22,14 @@ def bay_list(request):
         bays = ParkingBay.objects.all()[:100]
         serializer = ParkingBaySerializer(bays, many=True)
         return Response(serializer.data)
+
+@api_view(['GET'])
+def bay_detail(request, pk):
+    try:
+        bay = ParkingBay.objects.get(id=pk)
+    except ParkingBay.DoesNotExist:
+        return HttpResponse(status=404)
+
+    if request.method == 'GET':
+        serializer = ParkingBaySerializer(bay)
+        return Response(serializer.data)

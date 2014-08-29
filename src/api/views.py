@@ -47,6 +47,14 @@ def sign_archetype_list(request):
         serializer = SignArchetypeSerializer(signs, many=True)
         return Response(serializer.data)
 
+
+@api_view(['GET'])
+def sign_archetype_detail(request, pk):
+    if request.method == 'GET':
+        sign = SignArchetype.objects.get(id=pk)
+        serializer = SignArchetypeSerializer(sign)
+        return Response(serializer.data)
+
 @api_view(['GET'])
 def parkingbaysignarchetyperelationship_detail(request, pk):
     try:

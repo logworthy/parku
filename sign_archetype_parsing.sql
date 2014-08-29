@@ -1,5 +1,4 @@
-﻿/*drop table all_signs;
-drop table sign_base;*/
+﻿drop table all_signs;
 
 create table all_signs as
 select distinct sign from parking_events;
@@ -53,10 +52,6 @@ alter table all_signs add column requires_disability_permit boolean;
 update all_signs set requires_disability_permit =
 case when sign like '%DIS%' then true else false end;
 
-alter table all_signs add column all_other_times boolean;
-update all_signs set all_other_times =
-case when sign like '%AOT%' then true else false end;
-
 alter table all_signs add column start_time time;
 update all_signs set start_time =
 (regexp_matches(replace(sign, '.', ':'),'(\d\d?:?\.?\d\d) ?- ?(\d\d?:?\.?\d\d)'))[1]::time;
@@ -72,31 +67,42 @@ alter table all_signs add column day_of_week_end integer;
 with temp_table as (
 select 
 	sign,
-	(regexp_matches(sign,'((M-F)|(M-SAT)|(M-SUN)|(M-THU)|(Mon - Sat)|(S-S)|(M-Sun)|(Sun-Sun)|(Sat)|(SAT)|(SUN)|(Fri)|(THU)|(M-S))'))[1] as day_of_week
+	(regexp_matches(sign,'((M-F)|(M-SAT)|(M-SUN)|(M-THU)|(Mon - Sat)|(S-S)|(M-Sun)|(Sun-Sun)|(AOT)|(Sat)|(SAT)|(SUN)|(Fri)|(THU)|(M-S))'))[1] as day_of_week
 from all_signs
 ),
 temp_table2 as (
-select sign, 
-case 
-when day_of_week in ('M-F', 'M-SAT', 'M-SUN', 'M-THU', 'Mon - Sat', 'M-Sun', 'M-S', 'AOT') then 0
-when day_of_week in ('THU', 'Thu') then 3
-when day_of_week in ('FRI', 'Fri') then 4
-when day_of_week in ('S-S', 'Sat', 'SAT') then 5
-when day_of_week in ('Sun', 'SUN', 'Sun-Sun') then 6
-end as day_of_week_start,
-case 
-when day_of_week in ('Thu', 'THU', 'M-THU') then 3
-when day_of_week in ('Fri','M-F') then 4
-when day_of_week in ('Sat', 'SAT', 'Mon - Sat', 'M-SAT') then 5
-when day_of_week in ('Sun', 'SUN', 'M-SUN', 'M-Sun', 'S-S', 'Sun-Sun', 'M-S') then 6
-end as day_of_week_end
+select sign, (regexp_matches(day_of_week,'(.*)-?(.*)'))[1] as day_of_week_start,
+(regexp_matches(day_of_week,'(.*)-?(.*)'))[2] as day_of_week_end
 from temp_table
 )
+, temp_table3 as (
+select 
+sign,
+case when day_of_week_start in ('M', 'Mon', 'Mon ') then 0
+when day_of_week_start in ('Tue') then 1
+when day_of_week_start in ('Wed') then 2
+when day_of_week_start in ('Thu') then 3
+when day_of_week_start in ('Fri') then 4
+when day_of_week_start in ('Sat', 'SAT') then 5
+when day_of_week_start in ('Sun') then 6
+when day_of_week_start = 'S' and day_of_week_end = 'S' then 5
+end as day_of_week_start,
+case when day_of_week_end in ('M', 'Mon', 'Mon ') then 0
+when day_of_week_end in ('Tue') then 1
+when day_of_week_end in ('Wed') then 2
+when day_of_week_end in ('Thu', 'THU') then 3
+when day_of_week_end in ('Fri','F') then 4
+when day_of_week_end in ('Sat', 'SAT', ' Sat') then 5
+when day_of_week_end in ('Sun', 'SUN') then 6
+when day_of_week_start = 'S' and day_of_week_end = 'S' then 5
+end as day_of_week_end
+from temp_table2
+)
 update all_signs as a set day_of_week_start = b.day_of_week_start , day_of_week_end = b.day_of_week_end
-from temp_table2 as b
+from temp_table3 as b
 where a.sign=b.sign;
 
-select * from all_signs where day_of_week_start is null or day_of_week_end is null;
+select * from all_signs where day_of_week_start is null or day_of_week_end is null
 
 
 
@@ -140,4 +146,4 @@ where a.sign=b.sign;
 update all_signs set duration = 0
 where duration is null;
 
-/*select * from all_signs;*/
+select * from all_signs;

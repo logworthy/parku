@@ -19,7 +19,6 @@ html, body {
 }
 
 #filters {
-    padding-top: 1em;
     padding-left: 0.5em;
     padding-right: 0.5em;
 }
@@ -52,5 +51,51 @@ ul#toggles, ul#toggles > li {
     margin: 0;
     padding: 0;
     display: inline;
-    width: 100%;
+}
+
+#filters .ui-button {
+    border: none;
+    background: none;
+    width: 48px;
+    height: 48px;
+}
+
+#filters .icon.money .ui-button {
+    background: url( '/static/web/images/buttons/button pay up.png' ) no-repeat center center;
+}
+
+#filters .icon.money .ui-button.ui-state-active {
+    background: url( '/static/web/images/buttons/button pay down.png' ) no-repeat center center;
+}
+
+#filters .icon.mins-15 .ui-button {
+    background: url( '/static/web/images/buttons/15 min up.png' ) no-repeat center center;
+}
+
+#filters .icon.mins-15 .ui-button.ui-state-active {
+    background: url( '/static/web/images/buttons/15 min down.png' ) no-repeat center center;
+}
+
+#filters .icon.mins-20 .ui-button {
+    background: url( '/static/web/images/buttons/20 min up.png' ) no-repeat center center;
+}
+
+#filters .icon.mins-20 .ui-button.ui-state-active {
+    background: url( '/static/web/images/buttons/20 min down.png' ) no-repeat center center;
+}
+
+#filters .icon.mins-60 .ui-button {
+    background: url( '/static/web/images/buttons/1P up.png' ) no-repeat center center;
+}
+
+#filters .icon.mins-60 .ui-button.ui-state-active {
+    background: url( '/static/web/images/buttons/1P down.png' ) no-repeat center center;
+}
+
+#filters .icon.mins-120 .ui-button {
+    background: url( '/static/web/images/buttons/2P up.png' ) no-repeat center center;
+}
+
+#filters .icon.mins-120 .ui-button.ui-state-active {
+    background: url( '/static/web/images/buttons/2P down.png' ) no-repeat center center;
 }

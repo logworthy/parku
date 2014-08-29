@@ -13,21 +13,25 @@
     <div id="filters">
 
         <ul id="toggles" class="filter">
-            <li>
-                <input id="toggle-money" type="checkbox" class="icon money" />
-                <label for="toggle-money">$</label>
+            <li class="icon money">
+                <input id="toggle-money" type="checkbox" />
+                <label for="toggle-money"></label>
             </li>
-            <li>
-                <input id="toggle-mins-15" type="checkbox" class="icon mins-15" />
-                <label for="toggle-mins-15">15m</label>
+            <li class="icon mins-15">
+                <input id="toggle-mins-15" type="checkbox" />
+                <label for="toggle-mins-15"></label>
             </li>
-            <li>
-                <input id="toggle-mins-60" type="checkbox" class="icon mins-60" />
-                <label for="toggle-mins-60">1h</label>
+            <li class="icon mins-20">
+                <input id="toggle-mins-20" type="checkbox" />
+                <label for="toggle-mins-20"></label>
             </li>
-            <li>
-                <input id="toggle-mins-120" type="checkbox" class="icon mins-120" />
-                <label for="toggle-mins-120">2h</label>
+            <li class="icon mins-60">
+                <input id="toggle-mins-60" type="checkbox" />
+                <label for="toggle-mins-60"></label>
+            </li>
+            <li class="icon mins-120">
+                <input id="toggle-mins-120" type="checkbox" />
+                <label for="toggle-mins-120"></label>
             </li>
         </ul>
 
@@ -52,6 +56,7 @@
 
 {% block javascript %}
 
+    <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-heat/v0.1.0/leaflet-heat.js'></script>
     <script type="text/javascript">
 
         var map = null;

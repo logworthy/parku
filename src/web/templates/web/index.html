@@ -137,13 +137,13 @@
 
             var initMap = function() {
 
-                var map = L.map( 'map' ).setView( [ -37.808970221752396, 144.9597930908203 ], 8 );
+                var map = L.map( 'map' ).setView( [ -37.808970221752396, 144.9597930908203 ], 13 );
 
                 L.tileLayer.wms("http://api.maps.vic.gov.au/geowebcacheWM/service/wms?SERVICE=WMS&TILED=true", {
                     layers: 'WEB_MERCATOR',
                     format: 'image/png',
                     attribution: 'Map data &copy; <a href="http://api.maps.vic.gov.au">Vic Map</a>',
-                    maxZoom: 14,
+                    maxZoom: 18,
                     srs: 'EPSG:3857'
                 }).addTo( map );
 
@@ -151,7 +151,20 @@
 
             };
 
+            var initPoints = function( map ) {
+
+                $.getJSON(
+                    '/api/bays',
+                    {},
+                    function( response ) {
+                        L.geoJson( response ).addTo( map );
+                    }
+                )
+
+            };
+
             var map = initMap();
+            initPoints( map );
             setupFilters();
             setupSearch();
 

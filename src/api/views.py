@@ -3,8 +3,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.http import HttpResponse
 from rest_framework.renderers import JSONRenderer
-from api.models import ParkingBay, AggregateParkingBays
-from api.serializers import ParkingBaySerializer, AggregateParkingBaysSerializer
+from api.models import ParkingBay, AggregateParkingBays, SignArchetype, ParkingBaySignArchetypeRelationship
+from api.serializers import AggregateParkingBaysSerializer, ParkingBaySerializer, SignArchetypeSerializer, ParkingBaySignArchetypeRelationshipSerializer
 
 
 class JSONResponse(HttpResponse):
@@ -39,6 +39,24 @@ def bay_list(request):
         serializer = ParkingBaySerializer(bays, many=True)
         return Response(serializer.data)
 
+
+@api_view(['GET'])
+def sign_archetype_list(request):
+    if request.method == 'GET':
+        signs = SignArchetype.objects.all()
+        serializer = SignArchetypeSerializer(signs, many=True)
+        return Response(serializer.data)
+
+@api_view(['GET'])
+def parkingbaysignarchetyperelationship_detail(request, pk):
+    try:
+        pbsar = ParkingBaySignArchetypeRelationship.objects.get(id=pk)
+    except ParkingBaySignArchetypeRelationship.DoesNotExist:
+        return HttpResponse(status=404)
+
+    if request.method == 'GET':
+        serializer = ParkingBaySignArchetypeRelationshipSerializer(pbsar)
+        return Response(serializer.data)
 
 @api_view(['GET'])
 def bay_detail(request, pk):

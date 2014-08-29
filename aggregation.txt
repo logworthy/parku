@@ -1,0 +1,4 @@
+SSC - Furthest Out
+SA1 - Closer
+bay cluster (nearest neighbour within 10m) - Closerer
+disagreegate (closest)

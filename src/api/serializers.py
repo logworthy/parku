@@ -38,19 +38,8 @@ class SignArchetypeSerializer(serializers.ModelSerializer):
             'type',
             'raw_sign_text')
 
-# class ParkingBaySignArchetypeRelationshipSerializer(serializers.ModelSerializer):
-#         class Meta:
-#             model = ParkingBaySignArchetypeRelationship
-#             fields = ('parking_bay',
-#             'sign_archetype',
-#             'last_seen')
-
 class ParkingBaySerializer(GeoFeatureModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='bay-detail', format='html')
-    # parkingbaysignarchetyperelationship_set = serializers.HyperlinkedRelatedField(many=True, read_only=True
-    #     , view_name='parkingbaysignarchetyperelationship-detail')
-    #parkingbaysignarchetyperelationship_set = SignArchetypeSerializer(many=True)
-    #sign_archetypes = SignArchetypeSerializer(many=True)
     sign_archetypes = serializers.HyperlinkedRelatedField(many=True, view_name='sign_archetype-detail')
 
     class Meta:

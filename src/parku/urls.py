@@ -1,34 +1,27 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from api.views import parkingbaysignarchetyperelationship_detail, aggregate_bay_list, api_root
+from api.views import api_root
 from api import views as api_views
 from web import views
+from rest_framework.routers import SimpleRouter
 
+ref_router = SimpleRouter()
+ref_router.register(r'days_of_week', api_views.DayOfWeekViewSet, 'day_of_week')
+ref_router.register(r'sign_types', api_views.SignTypeViewSet, 'sign_type')
+
+api_router = SimpleRouter()
+api_router.register(r'bays', api_views.ParkingBayViewSet, 'bay')
+api_router.register(r'sign_archetypes', api_views.SignArchetypeViewSet, 'sign_archetype')
 
 admin.autodiscover()
-
 
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 
     url(r'^api/$', api_root),
-
-    url(r'^api/reference/days_of_week/(?P<pk>[0-9]+)/$', api_views.DayOfWeekDetail.as_view(), name='day_of_week-detail'),
-    url(r'^api/reference/days_of_week/$', api_views.DayOfWeekList.as_view(), name='day_of_week-list'),
-
-    url(r'^api/reference/sign_types/(?P<pk>[0-9]+)/$', api_views.SignTypeDetail.as_view(), name='sign_type-detail'),
-    url(r'^api/reference/sign_types/$', api_views.SignTypeList.as_view(), name='sign_type-list'),
-
-    url(r'^api/bays$', api_views.BayList.as_view(), name='bay-list'),
-    url(r'^api/bays/(?P<pk>[0-9]+)/$', api_views.BayDetail.as_view(), name='bay-detail'),
-    url(r'^api/bays/aggregate/(?P<zoom_level>[0-9]+)$', aggregate_bay_list),
-
-    url(r'^api/sign_archetypes$', api_views.SignArchetypeList.as_view(), name='sign_archetype-list'),
-    url(r'^api/sign_archetypes/(?P<pk>[0-9]+)/$', api_views.SignArchetypeDetail.as_view(), name='sign_archetype-detail'),
-
-    # url(r'^api/parkingbaysignarchetyperelationships/(?P<pk>[0-9]+)/$',
-    # 	parkingbaysignarchetyperelationship_detail,
-    # 	name='parkingbaysignarchetyperelationship-detail'),
+    url(r'^api/', include(api_router.urls)),
+    url(r'^api/reference/', include(ref_router.urls)),
+    url(r'^api/bays/aggregate/(?P<zoom_level>[0-9]+)$', api_views.AggregateBayListView.as_view()),
     url(r'^$', views.index, name='home'),
 )
 

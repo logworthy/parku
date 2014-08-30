@@ -1,11 +1,30 @@
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from rest_framework import serializers
-from api.models import (ParkingBay, SignArchetype, ParkingBaySignArchetypeRelationship, AggregateGridCell, AggregateParkingBays)
+from api.models import (ParkingBay, SignArchetype, ParkingBaySignArchetypeRelationship, AggregateGridCell, AggregateParkingBays, DayOfWeek, SignType)
+
+class DayOfWeekSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name='day_of_week-detail', format='html')
+    class Meta:
+        model = DayOfWeek
+        fields = ('url', 'day_number', 'short_name', 'name')
+
+class SignTypeSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name='sign_type-detail', format='html')
+    class Meta:
+        model = SignType
+        fields = ('url', 'code', 'label')
 
 class SignArchetypeSerializer(serializers.ModelSerializer):
+        url = serializers.HyperlinkedIdentityField(view_name='sign_archetype-detail', format='html')
+        start_day = serializers.HyperlinkedRelatedField(view_name='day_of_week-detail')
+        end_day = serializers.HyperlinkedRelatedField(view_name='day_of_week-detail')
+        type = serializers.HyperlinkedRelatedField(view_name='sign_type-detail')
+
+
         class Meta:
             model = SignArchetype
-            fields = ('id',
+            fields = ('url',
+            'id',
             'start_time',
             'end_time',
             'start_day',
@@ -19,21 +38,25 @@ class SignArchetypeSerializer(serializers.ModelSerializer):
             'type',
             'raw_sign_text')
 
-class ParkingBaySignArchetypeRelationshipSerializer(serializers.ModelSerializer):
-        class Meta:
-            model = ParkingBaySignArchetypeRelationship
-            fields = ('parking_bay',
-            'sign_archetype',
-            'last_seen')
+# class ParkingBaySignArchetypeRelationshipSerializer(serializers.ModelSerializer):
+#         class Meta:
+#             model = ParkingBaySignArchetypeRelationship
+#             fields = ('parking_bay',
+#             'sign_archetype',
+#             'last_seen')
 
 class ParkingBaySerializer(GeoFeatureModelSerializer):
-    parkingbaysignarchetyperelationship_set = serializers.HyperlinkedRelatedField(many=True, read_only=True
-        , view_name='parkingbaysignarchetyperelationship-detail')
+    url = serializers.HyperlinkedIdentityField(view_name='bay-detail', format='html')
+    # parkingbaysignarchetyperelationship_set = serializers.HyperlinkedRelatedField(many=True, read_only=True
+    #     , view_name='parkingbaysignarchetyperelationship-detail')
+    #parkingbaysignarchetyperelationship_set = SignArchetypeSerializer(many=True)
+    #sign_archetypes = SignArchetypeSerializer(many=True)
+    sign_archetypes = serializers.HyperlinkedRelatedField(many=True, view_name='sign_archetype-detail')
 
     class Meta:
         model = ParkingBay
         geo_field = 'geom'
-        fields = ('street_marker','id','parkingbaysignarchetyperelationship_set')
+        fields = ('url', 'street_marker','id','sign_archetypes')
 
 
 class AggregateParkingBaysSerializer(GeoFeatureModelSerializer):
